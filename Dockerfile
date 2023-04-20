@@ -3,8 +3,7 @@ VOLUME /app/outputs
 VOLUME /app/inputs
 
 COPY ./requirements.txt /app/requirements.txt
-WORKDIR /home/pv/Documents/pm10_hdf_data/
-COPY /* /app/outputs/
+COPY ./data/* /app/inputs/
 WORKDIR /app
 
 RUN pip install -r requirements.txt
