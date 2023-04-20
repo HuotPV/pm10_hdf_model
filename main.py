@@ -48,12 +48,9 @@ class Era5Data:
         return cropped_ds_daily
 
 
-class RegModel:
+class Model:
 
     def __init__(self,data):
-
-        print(data.shape)
-
         n1 = round(data.shape[0] * 0.8) # used to delimit training and testing dataset
 
         u10_train = data["u10"].iloc[0:n1]; u10_test = data["u10"].iloc[n1::]
@@ -67,21 +64,6 @@ class RegModel:
         tp_train = data["tp"].iloc[0:n1]; tp_test = data["tp"].iloc[n1::]
         pm10_train = data["Particules PM10  (µg.m-3)"].iloc[0:n1]; pm10_test = data["Particules PM10  (µg.m-3)"].iloc[n1::]
         date_train = data["Date"].iloc[0:n1]; date_test = data["Date"].iloc[n1::]
-
-
-#        (u10_train, u10_test, 
-#        v10_train, v10_test,
-#        sp_train, sp_test,
-#        tp_train, tp_test,
-#        pm10_train,pm10_test) = train_test_split(data["u10"], #the variables to split
-#                                                data["v10"],
-#                                                data["sp"],
-#                                                data["tp"],
-#                                                data["Particules PM10  (µg.m-3)"],
-#                                                test_size = 0.2, #what proportion of the data to use in the test set
-#                                                random_state = 42, #set the random seed for reproducibility
-#                                                )
-
 
         self.X_train = np.concatenate([np.expand_dims(u10_train, axis=0),
                             np.expand_dims(v10_train, axis=0), 
@@ -109,6 +91,11 @@ class RegModel:
         self.date_test = date_test
 
 
+class RegModel(Model):
+
+    def __init__(self,data):
+        super().__init__(data)
+
     def predict(self):
         # Create linear regression object
         reg = linear_model.LinearRegression()
@@ -131,7 +118,10 @@ class RegModel:
         return a,stats
 
 
-class RandomForestModel(RegModel):
+class RandomForestModel(Model):
+
+    def __init__(self,data):
+        super().__init__(data)
 
     def predict(self):
         # Create Decision tree model
@@ -159,9 +149,13 @@ class RandomForestModel(RegModel):
 
 def __main__():
     # paths to data
-    path_pm10 = '/home/pv/Documents/pm10_hdf_data/pm10_station/'
-    path_station_info = '/home/pv/Documents/pm10_hdf_data/stations_infos.csv'
-    path_era5 = '/home/pv/Documents/pm10_hdf_data/era5-data.nc'
+    #path_pm10 = '/home/pv/Documents/pm10_hdf_data/'
+    #path_station_info = '/home/pv/Documents/pm10_hdf_data/stations_infos.csv'
+    #path_era5 = '/home/pv/Documents/pm10_hdf_data/era5-data.nc'
+
+    path_pm10 = '/app/inputs/'
+    path_station_info = '/app/inputs/stations_infos.csv'
+    path_era5 = '/app/inputs/era5-data.nc'
 
     ### LOAD DATA ###
     # pm10, add station info
@@ -196,6 +190,7 @@ def __main__():
         era5_pm10_stations = pd.concat((era5_pm10_stations,df_merged))
 
     print(era5_pm10_stations)
+    print(era5_pm10_stations.shape)
     era5_pm10_stations.dropna(inplace=True)
 
     # build the linear regression model
@@ -217,7 +212,7 @@ def __main__():
         plt.ylabel('Particules PM10  (µg.m-3)')
         plt.legend()
         plt.title(station_info.Station[i_station])
-        plt.savefig('results_{:02d}.png'.format(i_station),dpi=300)
+        plt.savefig('/app/inputs/results_{:02d}.png'.format(i_station),dpi=300)
         plt.close()
         
     print(stats)
@@ -225,7 +220,7 @@ def __main__():
     plt.ylabel('PM10 RMSE (µg.m-3)')
     plt.legend()
     plt.title(station_info.Station[i_station])
-    plt.savefig('stats.png'.format(i_station),dpi=300)
+    plt.savefig('/app/inputs/stats.png'.format(i_station),dpi=300)
     plt.close()
     
 __main__()

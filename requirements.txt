@@ -1,0 +1,8 @@
+pandas
+matplotlib
+numpy
+xarray
+matplotlib 
+scikit-learn
+torch 
+pytorch-lightning
