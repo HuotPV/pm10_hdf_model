@@ -10,6 +10,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn import linear_model
 from sklearn.ensemble import RandomForestRegressor 
+from sklearn.preprocessing import StandardScaler
+import torch
+import pytorch_lightning as pl
+
+from torch import nn
+from torch.nn import functional as F
+from torch.optim import Adam
+from torch.utils.data import TensorDataset, DataLoader
+
 
 import matplotlib.pyplot as plt
 
