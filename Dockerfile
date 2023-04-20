@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM bitnami/pytorch:latest
 VOLUME /app/outputs
 VOLUME /app/inputs
 
